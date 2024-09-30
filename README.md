@@ -33,6 +33,6 @@ First Trial of Wedding Gallery (subsidiary of Webbing Co.) at AR Wedding
   - This list of hyperlinks is specifically link to the thumbnails of the images in GDrive. Thumbnails are the only one that worked properly, I then resized it - hack I found somewhere.
   -  `gallery.html` then displays eveyrthing nicely
   -  Use chatgpt to edit the `styles.css` file because it is just too long and annoying.
-
+- Execution : `python app.py` in cmd
 ![Demo of Website with random pictures](img_gh/gallery2.png)
 
