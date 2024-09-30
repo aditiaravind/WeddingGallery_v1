@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ gallery_title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="{{ bg_class }}">
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+    
+    <div class="sidebar {{ sidebar_class }}">
+        <img src="{{ url_for('static', filename='circle.png') }}" alt="Sidebar Logo">
+        <a href="{{ url_for('gallery', gallery_id=1) }}">Bridal Shower</a>
+        <a href="{{ url_for('gallery', gallery_id=2) }}">Haldi Ceremony</a>
+        <a href="{{ url_for('gallery', gallery_id=3) }}">Mehindi</a>
+        <a href="{{ url_for('gallery', gallery_id=4) }}">Nichayadhartam</a>
+        <a href="{{ url_for('gallery', gallery_id=5) }}">Reception</a>
+        <a href="{{ url_for('gallery', gallery_id=6) }}">Wedding Ceremony</a>
+        <a href="{{ url_for('gallery', gallery_id=7) }}">Sangeet Night</a>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>{{ gallery_title }}</h1>
+            <p class="gallery-date">{{ gallery_date }}</p>
+        </header>
+        
+        <div class="gallery" id="gallery">
+            <p class="no-images-message" style="display: none;">Images coming soon!</p>
+        </div>
+        <button id="loadMore" data-page-token="">Load More</button>
+    </div>
+
+    <script>
+        const galleryId = {{ gallery_id }};
+        let pageToken = '';
+
+        async function loadImages() {
+            try {
+                const response = await fetch(`/load_images/${galleryId}?page_token=${pageToken}`);
+                const data = await response.json();
+
+                const gallery = document.getElementById('gallery');
+                if (data.images.length > 0) {
+                    data.images.forEach(imageUrl => {
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        gallery.appendChild(img);
+                    });
+
+                    pageToken = data.next_page_token || '';
+                    document.getElementById('loadMore').dataset.pageToken = pageToken;
+
+                    if (!pageToken) {
+                        document.getElementById('loadMore').style.display = 'none'; // Hide button if no more images
+                    }
+                } else {
+                    document.querySelector('.no-images-message').style.display = 'block';
+                    document.getElementById('loadMore').style.display = 'none';
+                }
+                // data.images.forEach(imageUrl => {
+                //     const img = document.createElement('img');
+                //     img.src = imageUrl;
+                //     gallery.appendChild(img);
+                // });
+
+                // pageToken = data.next_page_token || '';
+                // document.getElementById('loadMore').dataset.pageToken = pageToken;
+
+                // if (!pageToken) {
+                //     document.getElementById('loadMore').style.display = 'none'; // Hide button if no more images
+                // }
+            } catch (error) {
+                console.error('Error loading images:', error);
+            }
+        }
+
+        document.getElementById('loadMore').addEventListener('click', () => {
+            loadImages();
+        });
+
+        // Initial load
+        loadImages();
+
+        // Toggle sidebar visibility on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+        });
+    </script>
+</body>
+</html>
